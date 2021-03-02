@@ -18,7 +18,9 @@ An extremely easy to use speech-recognizer built with python. Uses the speech-re
 
 ## Installation
 Either download the zip file of the code or clone the repository using 
+```bash
 $ git clone https://github.com/Rachit-Singh/Speech-Assistant.git
+```
 
 The program includes shebang. So in Linux, just make the script executable and run without calling the interpreter everytime. Better, for quick switch, add the shell command to the keyboard shortcuts.
 
