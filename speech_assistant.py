@@ -8,6 +8,7 @@ import csv
 import re
 import colorama  # for colored text
 import time
+import signal
 
 colorama.init()
 
@@ -21,14 +22,15 @@ def defaultSettings() :
     # if the file doesn't exist, that means either it is the first time running the script or settings file has been deleted
     # create a settings file
     if not os.path.exists("settings.csv") :
-        string = "skipOptions : false\ndefaultOption : 1\nAudioFile transcript fileName : AudioFileName + _transcribed.txt\nopen_Output_In_TextEditor_After : 100"
+        string = "skipOptions : false\ndefaultOption : 1\nAudioFile transcript fileName : AudioFileName + _transcribed.txt\nopen_Output_In_TextEditor_After : 100\n"
+        string += "exitTerminalAfterResult : false\nexitAfter (sec) : 10"
         # writing the settings.csv
         with open("settings.csv", "w") as file :
             file.write(string)
 
         # manually returning the settings dictionary
         return {"skipOptions" : "false", "defaultOption" : "1", "AudioFile transcript fileName" : "AudioFileName + _transcribed.txt", 
-        "open_Output_In_TextEditor_After" : 100}
+        "open_Output_In_TextEditor_After" : 100, "exitTerminalAfterResult" : "false", "exitAfter (sec)" : "10"}
 
 
     with open("settings.csv", "r") as file :
@@ -191,6 +193,12 @@ def speechMagic() :
                 print(colorama.Style.RESET_ALL)
                 tryAgain = False   # since API was unreachable, no need to run the loop again
                 break
+
+        # if the exit Terminal is switched to true
+        if settings["exitTerminalAfterResult"] == "true" :
+            time.sleep(int(settings["exitAfter (sec)"]))   # go to sleep for specified time
+            os.system('taskkill /F /PID ' + str(os.getppid())) if osName == "Windows" else os.system("pidof gnome-terminal | kill -KILL")   # kill the terminal
+            sys.exit(0)
 
         if input("Want to go again?(Y/n) ").lower() == "n" :    # if the user does not want to go again
             tryAgain = False
